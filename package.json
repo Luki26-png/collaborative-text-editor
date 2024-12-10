@@ -1,0 +1,19 @@
+{
+  "name": "collaborative-text-editor",
+  "version": "1.0.0",
+  "description": "\"collaborative text editor project to demonstrate how distributed system work\"",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node server.cjs"
+  },
+  "author": "kelompok 2 rabu",
+  "license": "ISC",
+  "dependencies": {
+    "lib0": "^0.2.98",
+    "lodash.debounce": "^4.0.8",
+    "ws": "^8.18.0",
+    "y-websocket": "^2.0.4",
+    "yjs": "^13.6.20"
+  }
+}
