@@ -1,31 +1,67 @@
-#!/usr/bin/env node
-const WebSocket = require('ws')
-const http = require('http')
-const number = require('lib0/number')
-const wss = new WebSocket.Server({ noServer: true })
-const setupWSConnection = require('./utils.cjs').setupWSConnection
+require('dotenv').config();
+const http = require('http');
+const WebSocketServer = require('ws').Server;
+const Y = require('yjs');
+const { MongodbPersistence } = require('y-mongodb-provider');
+const { setPersistence, setupWSConnection } = require('./utils.cjs');
+const { MongoClient } = require('mongodb');
 
-const host = process.env.HOST || 'localhost'
-const port = number.parseInt(process.env.PORT || '1234')
-
-const server = http.createServer((_request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/plain' })
-  response.end('okay')
-})
-
-wss.on('connection', setupWSConnection)
-
-server.on('upgrade', (request, socket, head) => {
-  // You may check auth of request here..
-  // Call `wss.HandleUpgrade` *after* you checked whether the client has access
-  // (e.g. by checking cookies, or url parameters).
-  // See https://github.com/websockets/ws#client-authentication
-  wss.handleUpgrade(request, socket, head, /** @param {any} ws */ ws => {
-    wss.emit('connection', ws, request)
-  })
-})
+const server = http.createServer((request, response) => {
+	response.writeHead(200, { 'Content-Type': 'text/plain' });
+	response.end('okay');
+});
+// y-websocket
+const wss = new WebSocketServer({ server });
+wss.on('connection', setupWSConnection);
 
 
-server.listen(port, host, () => {
-  console.log(`running at '${host}' on port ${port}`)
-})
+// Connection URL
+const url = '';
+// Database Name
+const dbName = '';
+
+//connect to mongodb
+async function connectToDb() {
+  const client = await MongoClient.connect(url);
+  const db = client.db(dbName);
+  return { client, db };
+}
+
+/*y-mongodb-provider*/
+// if (!process.env.MONGO_URL) {
+// 	throw new Error('Please define the MONGO_URL environment variable');
+// }
+
+async function main() {
+  const { client, db } = await connectToDb();
+
+  const mdb = new MongodbPersistence({ client, db }, {
+    collectionName:'text-editor-data',
+    flushSize: 500,
+    multipleCollections: false,
+  });
+
+  setPersistence({
+    bindState: async (docName, ydoc) => {
+      const persistedYdoc = await mdb.getYDoc(docName);
+      const newUpdates = Y.encodeStateAsUpdate(ydoc);
+      mdb.storeUpdate(docName, newUpdates);
+      Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(persistedYdoc));
+      ydoc.on('update', async (update) => {
+        mdb.storeUpdate(docName, update);
+      });
+    },
+    writeState: () => {
+      return new Promise((resolve) => {
+        resolve(true);
+      });
+    },
+  });
+}
+
+main();
+
+server.listen(1234, () => {
+	// eslint-disable-next-line no-console
+	console.log(`listening on port: ${"1234"}`);
+});

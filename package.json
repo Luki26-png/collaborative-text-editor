@@ -3,17 +3,24 @@
   "version": "1.0.0",
   "description": "\"collaborative text editor project to demonstrate how distributed system work\"",
   "type": "module",
-  "main": "app.js",
+  "main": "server.cjs",
   "scripts": {
-    "start": "node server.cjs"
+    "start": "node server.cjs",
+    "serve": "nodemon server.cjs"
   },
   "author": "kelompok 2 rabu",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "lib0": "^0.2.98",
     "lodash.debounce": "^4.0.8",
+    "mongodb": "^6.11.0",
     "ws": "^8.18.0",
+    "y-mongodb-provider": "^0.2.0",
     "y-websocket": "^2.0.4",
     "yjs": "^13.6.20"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
