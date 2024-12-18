@@ -1,0 +1,14 @@
+//- Modal for Join Document
+.modal.fade#joinDocModal(tabindex="-1" aria-labelledby="joinDocModalLabel" aria-hidden="true")
+  .modal-dialog.modal-dialog-centered.modal-dialog-scrollable
+    .modal-content
+      .modal-header
+        h5.modal-title#joinDocModalLabel Masukkan ID Dokumen
+        button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+      .modal-body
+        form
+          .mb-3
+            input#document-id.form-control(type="text" name="document-id" placeholder="....")
+          input.btn.btn-primary(type="submit" value="Masuk")
+      .modal-footer
+        button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Batal

@@ -47,6 +47,7 @@ const wsProvider = new WebsocketProvider('ws://localhost:1234', 'my-roomname', y
 wsProvider.on('status', event => {
   console.log(event.status) // logs "connected" or "disconnected"
 });
+
 //create awareness to locat cursor
 const awareness = wsProvider.awareness;
 awareness.on('change', changes => {

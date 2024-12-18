@@ -1,0 +1,14 @@
+//- Modal for Create Document
+.modal.fade#createDocModal(tabindex="-1" aria-labelledby="createDocModalLabel" aria-hidden="true")
+  .modal-dialog.modal-dialog-centered.modal-dialog-scrollable
+    .modal-content
+      .modal-header
+        h5.modal-title#createDocModalLabel Masukkan Nama Dokumen
+        button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+      .modal-body
+        form
+          .mb-3
+            input#document-name.form-control(type="text" name="document-name" placeholder="....")
+          input.btn.btn-primary(type="submit" value="Buat Dokumen")
+      .modal-footer
+        button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Batal
