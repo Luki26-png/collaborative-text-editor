@@ -55,9 +55,11 @@ class UserService {
             const user = await users.findOne({ email: email });
             if (user) {
                 console.log("User found:");
-                console.log(user);
+                //console.log(user);
+                return user;
             } else {
                 console.log("No user found with the specified email.");
+                return null;
             }
         } catch (error) {
             console.error("Error retrieving user:", error);
@@ -91,7 +93,7 @@ class UserService {
             const user = await users.findOne({ email: email, password: password });
             if (user) {
                 console.log("User found:");
-                console.log(user);
+                //console.log(user);
                 return user; // Return the user object
             } else {
                 console.log("No user found with the specified email and password.");
@@ -104,4 +106,28 @@ class UserService {
     }
 }
 
-module.exports = {DatabaseService, UserService};
+class DocumentService{
+    constructor(dbService) {
+        this.dbService = dbService;
+    }
+
+    async createNewDocument(room_id, name, description){
+        try {
+            const db = await this.dbService.connect();
+            const docs = db.collection("documents");
+
+            const newDoc = {
+                'roomId': room_id,
+                'name': name,
+                'description': description
+            };
+
+            const result = await docs.insertOne(newDoc);
+            console.log("\x1b[32m" +`a document created with _id: ${result.insertedId}` + "\x1b[32m");
+        } catch (error) {
+            console.error("Error creating document:", error);
+        }
+    }
+}
+
+module.exports = {DatabaseService, UserService, DocumentService};

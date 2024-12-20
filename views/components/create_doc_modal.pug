@@ -3,12 +3,16 @@
   .modal-dialog.modal-dialog-centered.modal-dialog-scrollable
     .modal-content
       .modal-header
-        h5.modal-title#createDocModalLabel Masukkan Nama Dokumen
+        h5.modal-title#createDocModalLabel Buat Dokumen Baru
         button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
       .modal-body
         form(method='POST', action= "/new-doc", target='_self')
           .mb-3
+            label.form-label(for='document-name') Nama Dokumen :
             input#document-name.form-control(type="text", name="document-name", placeholder="....", required)
+          .mb-3
+            label.form-label(for='deskripsi') Deskripsi Singkat :
+            input#document-name.form-control(type="text", name="deskripsi", placeholder="....", required)
           input.btn.btn-primary(type="submit" value="Buat Dokumen")
       .modal-footer
         button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Batal

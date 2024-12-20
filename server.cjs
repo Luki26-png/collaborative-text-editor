@@ -1,4 +1,5 @@
 require('dotenv').config();
+const DocController = require('./controllers/document.cjs');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -28,21 +29,38 @@ app.set('view engine', 'pug');
 app.set('views','./views');
 
 app.get('/', (req, res)=>{
+  if(req.session.email){
+    res.redirect('/main');
+    return;
+  }
   res.render('login.pug');
 });
 
 app.get('/main', (req, res)=>{
   if(req.session.email){
-    res.render('main_page.pug');
+    res.render('main_page.pug', {document: null});
     return;
   }
   res.send("please login");
 });
 
 // create new doc
-app.post('/new-doc', (req, res) => {
-  console.table(req.body);
-  res.send("ok");
+app.post('/new-doc', async (req, res) => {
+  if(req.session.email){
+    const newDocData = {
+      name : req.body['document-name'],
+      description : req.body['deskripsi']
+    };
+
+    const newDoc = new DocController();
+    //create new doc and return its newly created room id
+    const newDocRoomId = await newDoc.createNewDoc(req.session.email ,newDocData.name, newDocData.description);
+    res.render('quill.pug', {roomId : newDocRoomId, docName : newDocData.name, user: req.session.name});
+    return;
+  }
+  res.send("please login");
+  //console.table(newDocData);
+  
   //res.render('quill.pug');
 });
 

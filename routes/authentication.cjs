@@ -12,9 +12,11 @@ authentication.post('/login', async (req, res)=>{
   const authController = new AuthController();
   const user = await authController.Login(loginData.email, loginData.password);
   if (user) {
-    console.table(user);
+    //console.table(user);
+    res.cookie('name', user.name);
     res.cookie('email', user.email);
     res.cookie('document', user.document);
+    req.session.name = user.name;
     req.session.email = user.email;
     req.session.document = user.document;
     console.log("\x1b[33m user with email " + user.email + " has logged in \x1b[0m")
@@ -26,6 +28,10 @@ authentication.post('/login', async (req, res)=>{
 
 //send register page
 authentication.get('/register', (req, res)=>{
+  if(req.session.email){
+    res.redirect('/main');
+    return;
+  }
   res.render('register.pug');
 });
 
@@ -38,8 +44,10 @@ authentication.post('/register', async (req, res)=>{
   };
   const authController = new AuthController();
   await authController.register(userData.name, userData.email, userData.password);
+  res.cookie('name', userData.name);
   res.cookie('email', userData.email);
   res.cookie('document', null);
+  req.session.name = userData.name;
   req.session.email = userData.email;
   req.session.document = null;
   res.redirect('/main');
