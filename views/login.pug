@@ -12,13 +12,13 @@ html(lang='en')
       #image-section
       #form-section
         h1#heading.kaisei-tokumin-extrabold Login 
-        form#form-fields(action= formPath , method='post')
+        form#form-fields(action= '/authentication/login' , method='post')
           .input-fields.kaisei-tokumin-regular
             label(for='email') Email:
-            input#username(type='text', name='email', required='')
+            input#username(type='text', name='email', required)
           .input-fields.kaisei-tokumin-regular
             label(for='password') Password:
-            input#password(type='password', name='password', required='')
+            input#password(type='password', name='password', required)
           input#submit-button(type='submit', value='Login')
         p#create-account
           | Do not have an account? create one 

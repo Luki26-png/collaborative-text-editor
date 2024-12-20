@@ -41,7 +41,7 @@ class UserService {
             };
 
             const result = await users.insertOne(user);
-            console.log(`User inserted with _id: ${result.insertedId}`);
+            console.log("\x1b[32m" +`User inserted with _id: ${result.insertedId}` + "\x1b[32m");
         } catch (error) {
             console.error("Error inserting user:", error);
         }
@@ -80,6 +80,26 @@ class UserService {
             }
         } catch (error) {
             console.error("Error updating user:", error);
+        }
+    }
+
+    async getUserByEmailAndPassword(email, password) {
+        try {
+            const db = await this.dbService.connect();
+            const users = db.collection("users");
+
+            const user = await users.findOne({ email: email, password: password });
+            if (user) {
+                console.log("User found:");
+                console.log(user);
+                return user; // Return the user object
+            } else {
+                console.log("No user found with the specified email and password.");
+                return null; // Return null if no user is found
+            }
+        } catch (error) {
+            console.error("Error retrieving user:", error);
+            return null; // Return null in case of an error
         }
     }
 }

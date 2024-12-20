@@ -1,4 +1,4 @@
-const { DatabaseService, UserService } = require('../configs/db');
+const { DatabaseService, UserService } = require('../configs/db.cjs');
 
 class User{
     constructor() {
@@ -24,6 +24,15 @@ class User{
         }
     }
 
+    //Get user by email and password from the database
+    async getUserByEmailAndPassword(email, password){
+        try {
+            return await this.userService.getUserByEmailAndPassword(email, password);
+        } catch (error) {
+            throw new Error('Error retrieving user: ' + error.message);
+        }
+    }
+
     // Update user document field
     async updateUserDocument(email, newDocumentArray) {
         try {
@@ -34,4 +43,4 @@ class User{
     }
 }
 
-module.exports = new User();
+module.exports = User;

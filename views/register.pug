@@ -11,15 +11,31 @@ html(lang='en')
     #background-container
       #form-container
         h1 Daftar ke Website Kami
-        form#form-section(method='POST', action= "/register", target='_self')
+        form#form-section(method='POST', action= "/authentication/register", target='_self')
           .form-item
             label.league-spartan(for='nama') Nama :
-            input#nama(type='text', name='nama')
+            input#nama(type='text', name='nama', required)
           .form-item
             label.league-spartan(for='email') Email :
-            input#email(type='email', name='email')
+            input#email(type='email', name='email', required)
           .form-item
             label.league-spartan(for='kata-sandi') Kata Sandi :
-            input#kata-sandi(type='password', name='kata-sandi')
+            input#kata-sandi(type='password', name='kata-sandi', required)
+          .form-item
+            label.league-spartan(for='ketik-ulang-kata-sandi') Ketik Ulang Kata Sandi:
+            input#ketik-ulang-kata-sandi(type='password', name='ketik-ulang-kata-sandi', required)
           .form-item
           input#submit-button(type='submit', value='Daftar')
+    script.
+      document.getElementById('form-section').addEventListener('submit', function(event) {
+      // Get the password and confirm password fields
+      const password = document.getElementById('kata-sandi').value;
+      const confirmPassword = document.getElementById('ketik-ulang-kata-sandi').value;
+      // Check if the passwords match
+      if (password !== confirmPassword) {
+      // Prevent form submission
+      event.preventDefault();
+      // Display an alert or add error message
+      alert('Kata Sandi dan Ketik Ulang Kata Sandi tidak sama!');
+      }
+      });

@@ -32,15 +32,39 @@ app.get('/', (req, res)=>{
 });
 
 app.get('/main', (req, res)=>{
-  res.render('main_page.pug');
+  if(req.session.email){
+    res.render('main_page.pug');
+    return;
+  }
+  res.send("please login");
 });
 
-// Simple route for health check
-app.get('/text', (req, res) => {
-  res.render('quill.pug');
+// create new doc
+app.post('/new-doc', (req, res) => {
+  console.table(req.body);
+  res.send("ok");
+  //res.render('quill.pug');
+});
+
+//join existing doc
+app.post('/join-doc', (req, res) => {
+
 });
 
 app.use('/authentication', authentication);
+
+app.get('/logout', (req, res)=>{
+  console.log("\x1b[33m user with email " + req.session.email + " has logged out \x1b[0m");
+  req.session.destroy();
+  res.clearCookie('email');
+  res.clearCookie('connect.sid');
+  res.clearCookie('document');
+  res.redirect('/');
+});
+
+app.get("*", (req, res)=>{
+  res.send("Incorrect url path");
+});
 
 // Create HTTP server from Express app
 const server = http.createServer(app);
@@ -80,6 +104,7 @@ async function main() {
     bindState: async (docName, ydoc) => {
       const persistedYdoc = await mdb.getYDoc(docName);
       const newUpdates = Y.encodeStateAsUpdate(ydoc);
+      //store update to mongodb
       mdb.storeUpdate(docName, newUpdates);
       Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(persistedYdoc));
       ydoc.on('update', async (update) => {

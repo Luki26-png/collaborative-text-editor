@@ -27,6 +27,6 @@ submitButton.addEventListener('click', (event)=>{
             return;
         }
         let response = xhrClient.response;
-        window.location.assign('http://'+window.location.host+':' + window.location.port + '/main');
+        window.location.assign('http://'+window.location.host +'/main');
     };
 });

@@ -6,9 +6,9 @@
         h5.modal-title#createDocModalLabel Masukkan Nama Dokumen
         button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
       .modal-body
-        form
+        form(method='POST', action= "/new-doc", target='_self')
           .mb-3
-            input#document-name.form-control(type="text" name="document-name" placeholder="....")
+            input#document-name.form-control(type="text", name="document-name", placeholder="....", required)
           input.btn.btn-primary(type="submit" value="Buat Dokumen")
       .modal-footer
         button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Batal
