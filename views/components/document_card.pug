@@ -1,7 +1,11 @@
 .row
-    .col-sm-6.my-2
-        .card
-            .card-body
-                h5.card-title Special title treatment
-                p.card-text With supporting text below as a natural lead-in to additional content.
-                a.btn.btn-primary(href='#') Go somewhere
+    if docCards
+        each cardData in docCards
+            .col-sm-6.my-2
+                .card
+                    .card-body
+                        h5.card-title #{cardData.name}
+                        p.card-text #{cardData.description}
+                        a.btn.btn-primary(href=`open/${cardData.roomId}`) Buka
+    else 
+        h6.py-3 Anda tidak memiliki dokumen

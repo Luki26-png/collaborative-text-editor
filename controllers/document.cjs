@@ -32,7 +32,6 @@ class DocumentController{
             }
             //update user doc lists
             await this.user.updateUserDocument(email, userCurrDoc);
-            
         } catch (error) {
             console.log(`Fail to update user doc lists : ${error}`);
         }
@@ -67,10 +66,6 @@ class DocumentController{
         } catch (error) {
             throw new Error('Error join existing doc : ' + error.message);
         }
-    }
-
-    openDoc(){
-
     }
 }
 

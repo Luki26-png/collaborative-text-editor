@@ -1,5 +1,6 @@
 require('dotenv').config();
 const DocController = require('./controllers/document.cjs');
+const MainPage = require('./controllers/mainPage.cjs');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -38,9 +39,10 @@ app.get('/', (req, res)=>{
 });
 
 //open main page
-app.get('/main', (req, res)=>{
+app.get('/main', async (req, res)=>{
   if(req.session.email){
-    res.render('main_page.pug', {document: null});
+    const mainPage = new MainPage();
+    await mainPage.showMainPage(req.session.email, req, res);
     return;
   }
   res.send("please login");

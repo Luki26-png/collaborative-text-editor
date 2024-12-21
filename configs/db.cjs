@@ -147,6 +147,19 @@ class DocumentService{
             console.error("getDocByRoomId log => Error retrieving document:", error);
         }
     }
+
+    async getDocsByRoomIds(roomIdArray) {
+        try {
+            const db = await this.dbService.connect();
+            const docs = db.collection("documents");
+
+            const documents = await docs.find({ roomId: { $in: roomIdArray } }).toArray();
+            console.log(`Retrieved ${documents.length} documents for the given roomIds.`);
+            return documents;
+        } catch (error) {
+            console.error("Error retrieving documents by roomIds:", error);
+        }
+    }
 }
 
 module.exports = {DatabaseService, UserService, DocumentService};

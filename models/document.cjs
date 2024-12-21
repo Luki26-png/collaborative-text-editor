@@ -21,6 +21,14 @@ class Document{
             console.error("Error retrieving document:", error);
         }
     }
+
+    async getDocsByRoomIdArray(roomIdArray){
+        try {
+            return await this.docService.getDocsByRoomIds(roomIdArray);
+        } catch (error) {
+            console.error("Error retrieving document by array of id:", error);
+        }
+    }
 }
 
 module.exports = Document;
