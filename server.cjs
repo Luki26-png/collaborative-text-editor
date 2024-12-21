@@ -4,6 +4,7 @@ const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const authentication = require('./routes/authentication.cjs');
+const openDoc = require('./routes/openDoc.cjs');
 const express = require('express');
 const http = require('http');
 const WebSocketServer = require('ws').Server;
@@ -36,6 +37,7 @@ app.get('/', (req, res)=>{
   res.render('login.pug');
 });
 
+//open main page
 app.get('/main', (req, res)=>{
   if(req.session.email){
     res.render('main_page.pug', {document: null});
@@ -59,15 +61,25 @@ app.post('/new-doc', async (req, res) => {
     return;
   }
   res.send("please login");
-  //console.table(newDocData);
-  
-  //res.render('quill.pug');
 });
 
-//join existing doc
-app.post('/join-doc', (req, res) => {
-
+//check if document exist
+app.post('/check-doc', async (req, res) => {
+  if(req.session.email){
+    const doc = new DocController();
+    const docExist = await doc.checkDoc(req.session.email, req.body.roomId);
+    if (docExist) {
+      res.json({message : "doc exist", roomId : req.body.roomId});
+      return;
+    }
+    res.json({message: "doc doesn't exist"}).status(404);
+    return;
+  }
+  res.send("please login");
 });
+
+//open doc
+app.use('/open', openDoc);
 
 app.use('/authentication', authentication);
 

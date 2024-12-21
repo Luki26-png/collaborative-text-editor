@@ -123,9 +123,28 @@ class DocumentService{
             };
 
             const result = await docs.insertOne(newDoc);
-            console.log("\x1b[32m" +`a document created with _id: ${result.insertedId}` + "\x1b[32m");
+            console.log("\x1b[32m" +`a document created with _id: ${result.insertedId}` + "\x1b[0m");
         } catch (error) {
             console.error("Error creating document:", error);
+        }
+    }
+
+    async getDocByRoomId(roomId){
+        try {
+            const db = await this.dbService.connect();
+            const docs = db.collection("documents");
+
+            const doc = await docs.findOne({ roomId: roomId });
+            if (doc) {
+                console.log(" document found:");
+                //console.log(user);
+                return doc;
+            } else {
+                console.log("No document found with the specified roomId.");
+                return null;
+            }
+        } catch (error) {
+            console.error("getDocByRoomId log => Error retrieving document:", error);
         }
     }
 }

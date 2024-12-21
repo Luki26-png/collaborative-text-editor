@@ -22,8 +22,11 @@ class DocumentController{
             //get user current doc list
             const user = await this.user.getUserByEmail(email);
             let userCurrDoc = user.document;
-            if (userCurrDoc) { 
-                userCurrDoc.push(roomId);//if user current doc is not empty
+            if (userCurrDoc) {//if user current doc is not empty
+                if(!userCurrDoc.includes(roomId)){
+                   //add room id to the list if it do not exist in it 
+                   userCurrDoc.push(roomId); 
+                }
             }else{
                 userCurrDoc = [roomId];//if user current doc is empty
             }
@@ -51,8 +54,19 @@ class DocumentController{
         }
     }
 
-    async joinDoc(){
-
+    async checkDoc(email, roomId){
+        try {
+            //check if the doc with specified room id exist
+            const docExist = await this.doc.getDocByRoomId(roomId);
+            if (docExist) {
+                //update the user doc list
+                await this.updateUserDocList(email, roomId);
+                return docExist;
+            }
+            return null;
+        } catch (error) {
+            throw new Error('Error join existing doc : ' + error.message);
+        }
     }
 
     openDoc(){

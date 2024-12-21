@@ -13,6 +13,14 @@ class Document{
             throw new Error('Error creating new documents : ' + error.message);
         }
     }
+
+    async getDocByRoomId(roomId){
+        try {
+            return await this.docService.getDocByRoomId(roomId);
+        } catch (error) {
+            console.error("Error retrieving document:", error);
+        }
+    }
 }
 
 module.exports = Document;

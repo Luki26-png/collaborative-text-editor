@@ -7,8 +7,9 @@
         button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
       .modal-body
         form
+          h6#doc-notify.text-danger(style="display:none") ID Dokumen Tidak ditemukan
           .mb-3
-            input#document-id.form-control(type="text" name="document-id" placeholder="....")
-          input.btn.btn-primary(type="submit" value="Masuk")
+            input#roomId.form-control(type="text" name="document-id",placeholder="....")
+          input.btn.btn-primary(type="submit" value="Masuk" id="join-document")
       .modal-footer
         button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Batal

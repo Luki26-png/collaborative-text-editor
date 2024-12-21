@@ -4,6 +4,18 @@ import * as Y from 'yjs'
 import { QuillBinding } from 'y-quill'
 import { WebsocketProvider } from 'y-websocket'
 
+function generateDarkHexColor() {
+  // Generate random values for R, G, B in a low range (0-127)
+  const r = Math.floor(Math.random() * 128); // 0-127
+  const g = Math.floor(Math.random() * 128); // 0-127
+  const b = Math.floor(Math.random() * 128); // 0-127
+
+  // Convert to hexadecimal and pad with 0 if needed
+  const hex = (value) => value.toString(16).padStart(2, '0');
+
+  // Combine the RGB values into a hex color string
+  return `#${hex(r)}${hex(g)}${hex(b)}`;
+}
 
 Quill.register('modules/cursors', QuillCursors);
 
@@ -37,13 +49,21 @@ const quill = new Quill(document.querySelector('#editor'), {
   theme: 'snow' // 'bubble' is also great
 })
 
+// Retrieve the id of the element with class .document-room-id
+const documentRoomIdElement = document.querySelector('.document-room-id');
+const documentRoomId = documentRoomIdElement ? documentRoomIdElement.id : null;
+
+// Retrieve the id of the element with class .user-name
+const userNameElement = document.querySelector('.user-name');
+const userNameId = userNameElement ? userNameElement.id : null;
+
 // A Yjs document holds the shared data
 const ydoc = new Y.Doc()
 // Define a shared text type on the document
 const ytext = ydoc.getText('quill');
 
 //create provider
-const wsProvider = new WebsocketProvider('ws://localhost:1234', 'my-roomname', ydoc);
+const wsProvider = new WebsocketProvider('ws://' + window.location.host, documentRoomId, ydoc);
 wsProvider.on('status', event => {
   console.log(event.status) // logs "connected" or "disconnected"
 });
@@ -60,9 +80,9 @@ awareness.on('change', changes => {
 // We update our "user" field to propagate relevant user information.
 awareness.setLocalStateField('user', {
   // Define a print name that should be displayed
-  name: 'Emmanuelle Charpentier',
+  name: userNameId,
   // Define a color that should be associated to the user:
-  color: '#ffb61e' // should be a hex color
+  color: generateDarkHexColor() // should be a hex color
 });
 // Create an editor-binding which
 // "binds" the quill editor to a Y.Text type.
