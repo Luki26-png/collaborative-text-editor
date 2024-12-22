@@ -12,6 +12,7 @@
   "dependencies": {
     "quill": "^2.0.3",
     "quill-cursors": "^4.0.3",
+    "quill-image-resizor": "^2.0.0",
     "y-quill": "^1.0.0",
     "y-websocket": "^2.0.4",
     "yjs": "^13.6.20"

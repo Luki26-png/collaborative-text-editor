@@ -1,8 +1,9 @@
-import Quill from 'quill'
-import QuillCursors from 'quill-cursors'
-import * as Y from 'yjs'
-import { QuillBinding } from 'y-quill'
-import { WebsocketProvider } from 'y-websocket'
+import Quill from 'quill';
+import QuillCursors from 'quill-cursors';
+import * as Y from 'yjs';
+import { QuillBinding } from 'y-quill';
+import { WebsocketProvider } from 'y-websocket';
+import  ImageResizor  from 'quill-image-resizor';
 
 function generateDarkHexColor() {
   // Generate random values for R, G, B in a low range (0-127)
@@ -17,18 +18,21 @@ function generateDarkHexColor() {
   return `#${hex(r)}${hex(g)}${hex(b)}`;
 }
 
+ImageResizor.Quill = Quill
 Quill.register('modules/cursors', QuillCursors);
+Quill.register('modules/imageResizor', ImageResizor);
 
-const quill = new Quill(document.querySelector('#editor'), {
+const quill = new Quill('#editor', {
   modules: {
+    imageResizor:{},
     cursors: true,
     toolbar: [
       // adding some Quill content features
       ['bold', 'italic', 'underline', 'strike'], // toggled buttons
       ['blockquote', 'code-block'],
+      [{'list': 'ordered'}],
       ['link', 'image','formula'],
       [{ 'header': 1 }, { 'header': 2 }],   // custom button values
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
       [{ 'script': 'sub'}, { 'script': 'super' }], // superscript/subscript
       [{ 'indent': '-1'}, { 'indent': '+1' }],   // outdent/indent
       [{ 'direction': 'rtl' }],      // text direction
@@ -45,7 +49,7 @@ const quill = new Quill(document.querySelector('#editor'), {
       userOnly: true
     }
   },
-  placeholder: 'Start collaborating...',
+  placeholder: 'Mulai Berkolaborasi...',
   theme: 'snow' // 'bubble' is also great
 })
 
