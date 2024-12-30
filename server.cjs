@@ -80,6 +80,17 @@ app.post('/check-doc', async (req, res) => {
   res.send("please login");
 });
 
+app.get('/members', (req, res) => {
+  const groupMembers = [
+    { NIM: 2201020136, nama: 'Kuncoro Lukito' },
+    { NIM: 2201020041, nama: 'Amelia' },
+    { NIM: 2201020048, nama: 'Janumelah' },
+    { NIM: 2201020019, nama: 'Arinda Amalia Putri' },
+    { NIM: 2201020006, nama: 'Lisa Mulyana' },
+  ];
+  res.render('members', { groupMembers });
+});
+
 //open doc
 app.use('/open', openDoc);
 
