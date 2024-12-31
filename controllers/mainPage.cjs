@@ -10,7 +10,7 @@ class MainPage{
     async showMainPage(email, req, res){
         try {
             const userCurrentDocList = await this.user.getUserByEmail(email);
-            if (userCurrentDocList) {
+            if (userCurrentDocList && userCurrentDocList.document){
                 //console.table(userCurrentDocList.document);
                 const docCardData = await this.doc.getDocsByRoomIdArray(userCurrentDocList.document);
                 //console.log(docCardData);
