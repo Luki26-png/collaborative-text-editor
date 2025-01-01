@@ -281,6 +281,7 @@ exports.setupWSConnection = (conn, req, { docName = (req.url || '').slice(1).spl
     }
   }, pingTimeout)
   conn.on('close', () => {
+    
     closeConn(doc, conn)
     clearInterval(pingInterval)
   })

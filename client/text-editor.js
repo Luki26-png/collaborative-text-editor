@@ -30,8 +30,8 @@ const quill = new Quill('#editor', {
       // adding some Quill content features
       ['bold', 'italic', 'underline', 'strike'], // toggled buttons
       ['blockquote', 'code-block'],
-      [{'list': 'ordered'}],
-      ['link', 'image','formula'],
+      [{ 'list': 'ordered'}],
+      ['link', 'image'],
       [{ 'header': 1 }, { 'header': 2 }],   // custom button values
       [{ 'script': 'sub'}, { 'script': 'super' }], // superscript/subscript
       [{ 'indent': '-1'}, { 'indent': '+1' }],   // outdent/indent

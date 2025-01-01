@@ -139,7 +139,7 @@ async function main() {
 
   const mdb = new MongodbPersistence({ client, db }, {
     collectionName:'text-editor-data',
-    flushSize: 100,
+    flushSize: 50,
     multipleCollections: false,
   });
 
@@ -148,16 +148,18 @@ async function main() {
       const persistedYdoc = await mdb.getYDoc(docName);
       const newUpdates = Y.encodeStateAsUpdate(ydoc);
       //store update to mongodb
-      mdb.storeUpdate(docName, newUpdates);
+      mdb.storeUpdate(docName, newUpdates);//set the initial state
       Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(persistedYdoc));
       ydoc.on('update', async (update) => {
         mdb.storeUpdate(docName, update);
+        //Y.logUpdate(update);
       });
     },
-    writeState: () => {
-      return new Promise((resolve) => {
-        resolve(true);
-      });
+    writeState: async(docName) => {
+      await mdb.flushDocument(docName);
+      const currentVersion = await mdb.getYDoc(docName);
+      console.log(currentVersion.getText('quill').toJSON());
+      //create a version based on the current doc state after all user disconnected
     },
   });
 }
