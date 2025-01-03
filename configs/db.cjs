@@ -168,7 +168,8 @@ class DocumentService{
 
             const newDoc = {
                 '_id': room_id,
-                'version': null
+                'version': null,
+                'time' : null
             };
 
             const result = await docs.insertOne(newDoc);
@@ -178,13 +179,13 @@ class DocumentService{
         }
     }
 
-    async addNewVersion(id, newVersionArray){
+    async addNewVersion(id, newVersionArray, newTimeArray){
         try {
             const db = await this.dbService.connect();
             const users = db.collection("doc-version");
 
             const filter = { _id: id }; // Filter by id
-            const update = { $set: { version: newVersionArray } }; //insert the new array of version
+            const update = { $set: { version: newVersionArray, time : newTimeArray } }; //insert the new array of version
 
             const result = await users.updateOne(filter, update);
             if (result.matchedCount > 0) {

@@ -41,15 +41,15 @@ class Document{
     async retrieveVersion(id){
         try {
             const versionsDoc = await this.docService.retrieveVersionArray(id);
-            return versionsDoc.version;
+            return {version : versionsDoc.version, time : versionsDoc.time};
         } catch (error) {
             console.error("Error retrieving versioning document with specified id from model:", error);
         }
     }
 
-    async addNewVersion(id, newVersionArray){
+    async addNewVersion(id, newVersionArray, timeArray){
         try {
-            await this.docService.addNewVersion(id, newVersionArray);
+            await this.docService.addNewVersion(id, newVersionArray, timeArray);
         } catch (error) {
             throw new Error('Error adding a new versioning doc: ' + error.message);
         }

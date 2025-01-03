@@ -69,19 +69,30 @@ class DocumentController{
         }
     }
 
-    async addNewVersion(id, currentSnapshot){
+    async addNewVersion(id, currentSnapshot, currentTime){
         try {
-            let currentVersionArray = await this.doc.retrieveVersion(id);
+            let currentDoc = await this.doc.retrieveVersion(id);
+            let currentVersionArray = currentDoc.version;
+            let currentVersionTimeArray = currentDoc.time; 
             if(currentVersionArray){
                 currentVersionArray.push(currentSnapshot);
+                currentVersionTimeArray.push(currentTime);
             }else{
                 currentVersionArray = [currentSnapshot];
-                
+                currentVersionTimeArray = [currentTime];
             }
-            await this.doc.addNewVersion(id, currentVersionArray);
+            await this.doc.addNewVersion(id, currentVersionArray, currentVersionTimeArray);
             //console.log(currentVersionArray);
         } catch (error) {
-            throw new Error('Error join creating new doc version : ' + error.message);
+            throw new Error('Error creating new doc version : ' + error.message);
+        }
+    }
+
+    async retrieveDocVersion(id){
+        try {
+            return await this.doc.retrieveVersion(id);
+        } catch (error) {
+            throw new Error('Error retrieving doc version : ' + error.message)
         }
     }
 }

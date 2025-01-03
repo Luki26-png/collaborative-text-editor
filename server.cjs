@@ -80,6 +80,15 @@ app.post('/check-doc', async (req, res) => {
   res.send("please login");
 });
 
+app.post('/versions', async (req, res)=>{
+  const id = req.body.id;
+  const doc = new DocController();
+  const docVersion = await doc.retrieveDocVersion(id);
+  const versionArray = docVersion.version;
+  const versionTimeArray = docVersion.time;
+  res.status(200).json({versions : versionArray, time : versionTimeArray});
+});
+
 app.get('/members', (req, res) => {
   const groupMembers = [
     { NIM: 2201020136, nama: 'Kuncoro Lukito' },
@@ -166,9 +175,23 @@ async function main() {
       const encodedSnapshot = Y.encodeSnapshot(snapshot);
       //console.log("encoded snapshot", encoded);
 
+      //get the current time
+      const now = new Date();
+
+      // Extract day, month, year, hours, and minutes
+      const day = String(now.getDate()).padStart(2, '0');  // Add leading zero if single digit
+      const month = String(now.getMonth() + 1).padStart(2, '0');  // Months are 0-indexed, so add 1
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, '0');  // Add leading zero if single digit
+      const minutes = String(now.getMinutes()).padStart(2, '0');  // Add leading zero if single digit
+
+      // Format the date and time as a string
+      const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}`;
+
       //save encoded version to database
       const document = new DocController();
-      await document.addNewVersion(docName, encodedSnapshot);
+      await document.addNewVersion(docName, encodedSnapshot, formattedDateTime);
+      //console.log(encodedSnapshot);
     },
   });
 }
