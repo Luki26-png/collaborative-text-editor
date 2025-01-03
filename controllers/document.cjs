@@ -44,6 +44,7 @@ class DocumentController{
         try {
             //create new doc
             this.doc.createNewDoc(roomId, name, description);
+            this.doc.createVersioningDoc(roomId);
             //update user doc list
             await this.updateUserDocList(email, roomId);
             //return the document room id
@@ -65,6 +66,22 @@ class DocumentController{
             return null;
         } catch (error) {
             throw new Error('Error join existing doc : ' + error.message);
+        }
+    }
+
+    async addNewVersion(id, currentSnapshot){
+        try {
+            let currentVersionArray = await this.doc.retrieveVersion(id);
+            if(currentVersionArray){
+                currentVersionArray.push(currentSnapshot);
+            }else{
+                currentVersionArray = [currentSnapshot];
+                
+            }
+            await this.doc.addNewVersion(id, currentVersionArray);
+            //console.log(currentVersionArray);
+        } catch (error) {
+            throw new Error('Error join creating new doc version : ' + error.message);
         }
     }
 }

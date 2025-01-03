@@ -136,7 +136,7 @@ class DocumentService{
 
             const doc = await docs.findOne({ roomId: roomId });
             if (doc) {
-                console.log(" document found:");
+                console.log(" document specified room id found ");
                 //console.log(user);
                 return doc;
             } else {
@@ -154,10 +154,65 @@ class DocumentService{
             const docs = db.collection("documents");
 
             const documents = await docs.find({ roomId: { $in: roomIdArray } }).toArray();
-            console.log(`Retrieved ${documents.length} documents for the given roomIds.`);
+            console.log(`Retrieved ${documents.length} documents for the given roomId Array.`);
             return documents;
         } catch (error) {
             console.error("Error retrieving documents by roomIds:", error);
+        }
+    }
+
+    async createVersioning(room_id){
+        try {
+            const db = await this.dbService.connect();
+            const docs = db.collection("doc-version");
+
+            const newDoc = {
+                '_id': room_id,
+                'version': null
+            };
+
+            const result = await docs.insertOne(newDoc);
+            console.log("\x1b[32m" +`a versioning document created with _id: ${result.insertedId}` + "\x1b[0m");
+        } catch (error) {
+            console.error("Error creating new versioning document: ", error);
+        }
+    }
+
+    async addNewVersion(id, newVersionArray){
+        try {
+            const db = await this.dbService.connect();
+            const users = db.collection("doc-version");
+
+            const filter = { _id: id }; // Filter by id
+            const update = { $set: { version: newVersionArray } }; //insert the new array of version
+
+            const result = await users.updateOne(filter, update);
+            if (result.matchedCount > 0) {
+                console.log(`versioning doc with id '${id}' updated successfully.`);
+            } else {
+                console.log(`No versioning doc with id '${id}'.`);
+            }
+        } catch (error) {
+            console.error("Error add new doc version:", error);
+        }
+    }
+
+    async retrieveVersionArray(id){
+        try {
+            const db = await this.dbService.connect();
+            const docs = db.collection("doc-version");
+
+            const doc = await docs.findOne({ _id: id });
+            if (doc) {
+                console.log("versioning document with specified room id retrieved");
+                //console.log(doc);
+                return doc;
+            } else {
+                console.log("No versioning document found with the specified roomId.");
+                return null;
+            }
+        } catch (error) {
+            console.error("retrieveVersionArray log => Error retrieving versioning document:", error);
         }
     }
 }

@@ -157,9 +157,18 @@ async function main() {
     },
     writeState: async(docName) => {
       await mdb.flushDocument(docName);
-      const currentVersion = await mdb.getYDoc(docName);
-      console.log(currentVersion.getText('quill').toJSON());
+      const currentState = await mdb.getYDoc(docName);
+      //console.log(currentState.getText('quill').toJSON());
+
       //create a version based on the current doc state after all user disconnected
+      const snapshot = Y.snapshot(currentState);
+      //console.log("current snapshot\n", snapshot);
+      const encodedSnapshot = Y.encodeSnapshot(snapshot);
+      //console.log("encoded snapshot", encoded);
+
+      //save encoded version to database
+      const document = new DocController();
+      await document.addNewVersion(docName, encodedSnapshot);
     },
   });
 }

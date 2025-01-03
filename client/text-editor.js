@@ -62,7 +62,7 @@ const userNameElement = document.querySelector('.user-name');
 const userNameId = userNameElement ? userNameElement.id : null;
 
 // A Yjs document holds the shared data
-const ydoc = new Y.Doc()
+const ydoc = new Y.Doc({gc:true});
 // Define a shared text type on the document
 const ytext = ydoc.getText('quill');
 
