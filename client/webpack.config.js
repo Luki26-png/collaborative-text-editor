@@ -4,7 +4,7 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   entry: {
-    quill: './text-editor.js'
+    quill: './text-editor.js',
   },
   output: {
     globalObject: 'self',

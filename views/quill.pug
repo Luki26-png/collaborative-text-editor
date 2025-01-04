@@ -15,13 +15,14 @@ html(lang='en')
       .row
         .col-lg-3.py-3.overflow-y-scroll.d-none(id="history") 
           button.btn.btn-primary.px-3.mb-2(id='close-history') Tutup
-        .col(id="text-editor")
+        .col.d-none(id="history-preview")
+          #preview-editor(style = "min-height: 50vh; padding-top:1.2em; padding-bottom:1.2em")
+        .col.d-block(id="text-editor")
           //- open history button
           include ./components/history_button.pug
           h5.document-name.py-3 #{docName} 
           .document-room-id( id= roomId)
           p Document ID : #{roomId}
           .user-name( id = user)
-          #editor(style = "min-height: 50vh; padding-top:1.2em; padding-botto:1.2em")
+          #editor(style = "min-height: 50vh; padding-top:1.2em; padding-bottom:1.2em")
     script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js')
-    script(src='public/script/history.js')

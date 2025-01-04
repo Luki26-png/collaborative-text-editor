@@ -1,12 +1,42 @@
 let versionDocArray = [];
 
+const previewEditor = new Quill('#preview-editor', {
+    readOnly:true,
+    modules: {
+      imageResizor:{},
+      cursors: true,
+      toolbar: [
+        // adding some Quill content features
+        ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+        ['blockquote', 'code-block'],
+        [{ 'list': 'ordered'}],
+        ['link', 'image'],
+        [{ 'header': 1 }, { 'header': 2 }],   // custom button values
+        [{ 'script': 'sub'}, { 'script': 'super' }], // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],   // outdent/indent
+        [{ 'direction': 'rtl' }],      // text direction
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean']
+      ],
+      history: {
+        // Local undo shouldn't undo changes
+        // from remote users
+        userOnly: true
+      }
+    },
+    placeholder: '...',
+    theme: 'bubble' // 'bubble' is also great
+})
+
 // Function to create the HTML structure
 function createHistoryItem(version, date, position) {
     // Create the container div
     const container = document.createElement('div');
-    container.id = position;
     container.classList.add('container-fluid', 'py-3', 'border', 'history-item');
-    //container.setAttribute('onclick', 'showpreview(event)');
 
     // Create the first paragraph
     const paragraph1 = document.createElement('p');
@@ -23,9 +53,18 @@ function createHistoryItem(version, date, position) {
 
     // Create the version info small element
     const small2 = document.createElement('small');
+    small2.style.display = 'block';
     small2.classList.add('fst-italic', 'fw-light');
     small2.textContent = version;
     container.appendChild(small2);
+
+    //create preview button
+    const previewButton = document.createElement('button');
+    previewButton.classList.add('btn' ,'btn-secondary', 'my-2');
+    previewButton.textContent = "Preview";
+    previewButton.id = position;
+    previewButton.onclick = showpreview;
+    container.appendChild(previewButton);
 
     return container;
 }
@@ -83,7 +122,11 @@ document.getElementById("open-history").addEventListener("click", function() {
     }
     // Get the element with id 'history'
     var historyElement = document.getElementById("history");
-    
+
+    //get the main and preview editor
+    const previewEditor = document.getElementById('history-preview');
+    const mainEditor = document.getElementById('text-editor');
+
     //retrieve room id
     const documentRoomIdElement = document.querySelector('.document-room-id');
     const documentRoomId = documentRoomIdElement ? documentRoomIdElement.id : null;
@@ -131,10 +174,17 @@ document.getElementById("open-history").addEventListener("click", function() {
     // Remove 'd-none' class and add 'd-block' class
     historyElement.classList.remove("d-none");
     historyElement.classList.add("d-block");
-
+    previewEditor.classList.remove("d-none");
+    previewEditor.classList.add("d-block");
+    mainEditor.classList.remove("d-block");
+    mainEditor.classList.add("d-none");
 });
 
 document.getElementById("close-history").addEventListener("click", function() {
+    //get the main and preview editor
+    const previewEditor = document.getElementById('history-preview');
+    const mainEditor = document.getElementById('text-editor');
+
     const historyItem = document.querySelectorAll('.history-item');
     if(historyItem){
        historyItem.forEach(item => item.remove()); 
@@ -145,4 +195,16 @@ document.getElementById("close-history").addEventListener("click", function() {
     // Remove 'd-none' class and add 'd-block' class
     historyElement.classList.remove("d-block");
     historyElement.classList.add("d-none");
+    previewEditor.classList.remove("d-block");
+    previewEditor.classList.add("d-none");
+    mainEditor.classList.remove("d-none");
+    mainEditor.classList.add("d-block");
+
 });
+
+
+function showpreview(event){
+    event.preventDefault();
+    let id = event.target.id;
+    console.log(versionDocArray[id]);
+}
