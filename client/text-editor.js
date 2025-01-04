@@ -233,7 +233,7 @@ document.getElementById("open-history").addEventListener("click", function() {
     var historyElement = document.getElementById("history");
 
     //get the main and preview editor
-    const previewEditor = document.getElementById('history-preview');
+    const previewEditorContainer = document.getElementById('history-preview');
     const mainEditor = document.getElementById('text-editor');
 
     //retrieve room id
@@ -259,39 +259,48 @@ document.getElementById("open-history").addEventListener("click", function() {
         let response = xhrClient.response.versions;
         //console.log(response.versions);
         let versionTime = xhrClient.response.time;
-        const versionArray = response.map(base64String => {
-            const binaryString = atob(base64String); // Decode the base64 string
-            const uint8Array = new Uint8Array(binaryString.length);
-        
-            // Convert the binary string to Uint8Array
-            for (let i = 0; i < binaryString.length; i++) {
-              uint8Array[i] = binaryString.charCodeAt(i);
-            }
-            return uint8Array;
-        });
+        let versionArray = null;
+        if(response){
+          versionArray = response.map(base64String => {
+              const binaryString = atob(base64String); // Decode the base64 string
+              const uint8Array = new Uint8Array(binaryString.length);
+          
+              // Convert the binary string to Uint8Array
+              for (let i = 0; i < binaryString.length; i++) {
+                uint8Array[i] = binaryString.charCodeAt(i);
+              }
+              return uint8Array;
+          });
+        }
         
         //array of uint8 that hold doc state for every version
         versionDocArray = versionArray;
 
-        const numericVersion = createVersionArray(versionTime.length);
+        let numericVersion = null;
+        if(versionTime){
+          numericVersion = createVersionArray(versionTime.length);
+        }
         insertIntoHistorySideBar(numericVersion, versionTime);
         // console.log(versionArray);
         // console.log(versionTime);
         // console.log(createVersionArray(versionTime.length));
     }
 
+    // Clear the existing content in the Quill editor (this makes sure it's empty before inserting new content)
+    previewEditor.deleteText(0, previewEditor.getLength()); // Delete all content from index 0 to the end
+
     // Remove 'd-none' class and add 'd-block' class
     historyElement.classList.remove("d-none");
     historyElement.classList.add("d-block");
-    previewEditor.classList.remove("d-none");
-    previewEditor.classList.add("d-block");
+    previewEditorContainer.classList.remove("d-none");
+    previewEditorContainer.classList.add("d-block");
     mainEditor.classList.remove("d-block");
     mainEditor.classList.add("d-none");
 });
 
 document.getElementById("close-history").addEventListener("click", function() {
     //get the main and preview editor
-    const previewEditor = document.getElementById('history-preview');
+    const previewEditorContainer = document.getElementById('history-preview');
     const mainEditor = document.getElementById('text-editor');
 
     const historyItem = document.querySelectorAll('.history-item');
@@ -299,32 +308,74 @@ document.getElementById("close-history").addEventListener("click", function() {
        historyItem.forEach(item => item.remove()); 
     }
     // Get the element with id 'history'
-    var historyElement = document.getElementById("history");
+    const historyElement = document.getElementById("history");
     
     // Remove 'd-none' class and add 'd-block' class
     historyElement.classList.remove("d-block");
     historyElement.classList.add("d-none");
-    previewEditor.classList.remove("d-block");
-    previewEditor.classList.add("d-none");
+    previewEditorContainer.classList.remove("d-block");
+    previewEditorContainer.classList.add("d-none");
     mainEditor.classList.remove("d-none");
     mainEditor.classList.add("d-block");
-
+    versionDocArray = [];
 });
 
 function showpreview(event){
     event.preventDefault();
     let id = event.target.id;
+    const revertButton = document.getElementById('history-preview').firstChild;
+    revertButton.id = id;
 
-    const decodedVersion = Y.decodeSnapshot(versionDocArray[id]);
+    let decodedVersion = Y.decodeSnapshot(versionDocArray[id]);
     console.log(decodedVersion);
     
     const docRestored = Y.createDocFromSnapshot(ydoc, decodedVersion);
     docRestored.getMap("root"); // need to touch top-level type for toJSON to work
     console.log("state restored snapshot", docRestored.getText('quill').toDelta());
-    
+
     //////
     const delta = docRestored.getText('quill').toDelta(); // Get the Quill Delta format from Y.Text
 
+    // Clear the existing content in the Quill editor (this makes sure it's empty before inserting new content)
+    previewEditor.deleteText(0, previewEditor.getLength()); // Delete all content from index 0 to the end
     // Insert the content into the Quill editor
     previewEditor.setContents(delta);
+    docRestored.destroy();
+    decodedVersion = null;
 }
+
+//function to roll back to a specified version
+document.getElementById('history-preview').firstChild.addEventListener('click', (event)=>{
+    const id = event.target.id;
+    console.log(id);
+
+    let decodedVersion = Y.decodeSnapshot(versionDocArray[id]);
+    console.log(decodedVersion);
+    
+    const docRestored = Y.createDocFromSnapshot(ydoc, decodedVersion);
+    docRestored.getMap("root"); // need to touch top-level type for toJSON to work
+    //console.log("state restored snapshot", docRestored.getText('quill').toDelta());
+
+    const delta = docRestored.getText('quill').toDelta(); // Get the Quill Delta format from Y.Text
+    // Clear the existing content in the Quill editor (this makes sure it's empty before inserting new content)
+    //quill.deleteText(0, previewEditor.getLength()); // Delete all content from index 0 to the end
+    // Insert the content into the Quill editor
+    quill.setContents(delta);
+    // const currentVersion = Y.encodeStateAsUpdate(docRestored);
+    // Y.applyUpdate(ydoc, currentVersion);
+    docRestored.destroy();
+    decodedVersion = null;
+
+    // Remove 'd-none' class and add 'd-block' class
+    const previewEditorContainer = document.getElementById('history-preview');
+    const mainEditor = document.getElementById('text-editor');
+    const historyElement = document.getElementById("history");
+
+    historyElement.classList.remove("d-block");
+    historyElement.classList.add("d-none");
+    previewEditorContainer.classList.remove("d-block");
+    previewEditorContainer.classList.add("d-none");
+    mainEditor.classList.remove("d-none");
+    mainEditor.classList.add("d-block");
+    versionDocArray = [];
+});

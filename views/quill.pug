@@ -13,10 +13,11 @@ html(lang='en')
     include components/navbar.pug
     .container-fluid
       .row
-        .col-lg-3.py-3.overflow-y-scroll.d-none(id="history") 
+        .col-sm-3.py-3.d-none(id="history", style="overflow: auto; max-height: 80vh;") 
           button.btn.btn-primary.px-3.mb-2(id='close-history') Tutup
-        .col.d-none(id="history-preview")
-          #preview-editor(style = "min-height: 50vh; padding-top:1.2em; padding-bottom:1.2em")
+        .col.py-3.border-start.border-dark.d-none(id="history-preview")
+          button.btn.btn-warning.px-3.mb-2.d-none Kembali ke versi ini
+          #preview-editor(style = "min-height: 30vh; padding-top:1.2em; padding-bottom:1.2em;")
         .col.d-block(id="text-editor")
           //- open history button
           include ./components/history_button.pug

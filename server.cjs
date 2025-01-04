@@ -165,8 +165,8 @@ async function main() {
       });
     },
     writeState: async(docName) => {
-      await mdb.flushDocument(docName);
       const currentState = await mdb.getYDoc(docName);
+      mdb.flushDocument(docName);
       //console.log(currentState.getText('quill').toJSON());
 
       //create a version based on the current doc state after all user disconnected
